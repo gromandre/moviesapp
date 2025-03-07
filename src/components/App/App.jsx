@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./App.css";
-import MoviesGrid from "../MoviesGrid";
-import MovieSearch from "../MovieSearch";
+import MoviesGrid from "../MoviesGrid/MoviesGrid.jsx";
+import MovieSearch from "../MovieSearch/MovieSearch.jsx";
 import { Spin, Empty, Pagination } from "antd";
 import { debounce } from "lodash";
 import "antd/dist/antd.css";
@@ -23,7 +23,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("return");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Получаем список жанров
   useEffect(() => {
@@ -42,6 +42,12 @@ const App = () => {
   // Функция для загрузки фильмов
   const loadMovies = useCallback(
     (query, page) => {
+      if (!query.trim()) {
+        setMovies([]);
+        setTotalResults(0);
+        return;
+      }
+
       setLoading(true);
       const normalizedQuery = query.trim();
       console.log(`Поисковый запрос: "${normalizedQuery}", Страница: ${page}`);
@@ -96,41 +102,30 @@ const App = () => {
     [loadMovies]
   );
 
-  // Загрузка фильмов при монтировании компонента
-  useEffect(() => {
-    loadMovies(searchQuery, currentPage);
-  }, []);
-
-  return React.createElement(
-    "div",
-    { className: "container" },
-    React.createElement(MovieSearch, {
-      onSearch: debouncedSearch,
-      loading: loading,
-    }),
-    loading
-      ? React.createElement(
-          "div",
-          { className: "spinner-container" },
-          React.createElement(Spin, { size: "large" })
-        )
-      : movies.length > 0
-      ? [
-          React.createElement(MoviesGrid, { key: "grid", movies }),
-          React.createElement(Pagination, {
-            key: "pagination",
-            current: currentPage,
-            total: totalResults,
-            pageSize: PAGE_SIZE,
-            onChange: handlePageChange,
-            showSizeChanger: false,
-            showQuickJumper: false,
-            className: "pagination",
-          }),
-        ]
-      : React.createElement(Empty, {
-          description: "Ничего не найдено",
-        })
+  return (
+    <div className="container">
+      <MovieSearch onSearch={debouncedSearch} loading={loading} />
+      {loading ? (
+        <div className="spinner-container">
+          <Spin size="large" />
+        </div>
+      ) : movies.length > 0 ? (
+        <>
+          <MoviesGrid movies={movies} />
+          <Pagination
+            current={currentPage}
+            total={totalResults}
+            pageSize={PAGE_SIZE}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+            showQuickJumper={false}
+            className="pagination"
+          />
+        </>
+      ) : searchQuery ? (
+        <Empty description="Ничего не найдено" />
+      ) : null}
+    </div>
   );
 };
 

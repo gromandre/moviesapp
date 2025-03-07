@@ -1,1 +1,1 @@
-export { default } from "./MovieGenres";
+export { default } from "./MovieGenres.jsx";

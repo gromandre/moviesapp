@@ -1,1 +1,1 @@
-export { default } from "./MovieImage";
+export { default } from "./MovieImage.jsx";

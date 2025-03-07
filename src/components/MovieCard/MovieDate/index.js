@@ -1,1 +1,1 @@
-export { default } from "./MovieDate";
+export { default } from "./MovieDate.jsx";

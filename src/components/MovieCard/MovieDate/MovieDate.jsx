@@ -7,7 +7,7 @@ const MovieDate = ({ releaseDate }) => {
     ? format(new Date(releaseDate), "MMMM d, yyyy")
     : "No release date";
 
-  return React.createElement("p", { className: "movie-date" }, formattedDate);
+  return <p className="movie-date">{formattedDate}</p>;
 };
 
 export default MovieDate;
