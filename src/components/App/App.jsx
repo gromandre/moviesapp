@@ -51,7 +51,6 @@ const App = () => {
 
       setLoading(true);
       const normalizedQuery = query.trim();
-      console.log(`Поисковый запрос: "${normalizedQuery}", Страница: ${page}`);
 
       // Вычисляем, какую страницу API нам нужно запросить
       const apiPage = Math.ceil(page / 3); // Так как на одной странице API 20 фильмов, а нам нужно 6
@@ -85,10 +84,6 @@ const App = () => {
             endIndex
           );
 
-          console.log(
-            `Найдено фильмов: ${data.total_results}, Текущая страница: ${page}, Фильмов на странице: ${currentPageMovies.length}`
-          );
-
           // Ограничиваем общее количество результатов
           const maxResults = Math.min(data.total_results, MAX_PAGES * 20);
 
@@ -96,10 +91,7 @@ const App = () => {
           setTotalResults(maxResults);
           setLoading(false);
         })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+        .catch((err) => console.error(err));
     },
     [genres]
   );
@@ -141,6 +133,7 @@ const App = () => {
             onChange={handlePageChange}
             showSizeChanger={false}
             showQuickJumper={false}
+            showPrevNextJumpers={false}
             className="pagination"
           />
         </>
