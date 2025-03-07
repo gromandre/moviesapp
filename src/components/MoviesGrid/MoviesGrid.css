@@ -1,6 +1,16 @@
 .movies-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(2, 451px);
+  gap: 32px;
   padding: 20px;
+  justify-content: center;
+}
+
+.genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 9px;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
 } 

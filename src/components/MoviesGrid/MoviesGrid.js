@@ -3,11 +3,17 @@ import "./MoviesGrid.css";
 import MovieCard from "../MovieCard";
 
 const MoviesGrid = ({ movies }) => {
+  // Берем только первые 6 фильмов
+  const displayedMovies = movies.slice(0, 6);
+
   return React.createElement(
     "div",
     { className: "movies-grid" },
-    movies.map((movie) =>
-      React.createElement(MovieCard, { key: movie.id, movie })
+    displayedMovies.map((movie) =>
+      React.createElement(MovieCard, {
+        key: movie.id,
+        movie: movie,
+      })
     )
   );
 };
