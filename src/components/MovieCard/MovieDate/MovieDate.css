@@ -1,0 +1,8 @@
+.movie-date {
+    margin: 4px 0;
+    font-size: 12px;
+    color: rgba(130, 126, 126, 1) !important;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    line-height: 1;
+} 
