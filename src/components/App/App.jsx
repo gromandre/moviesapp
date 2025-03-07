@@ -16,6 +16,7 @@ const options = {
 };
 
 const PAGE_SIZE = 6;
+const MAX_PAGES = 25; // Максимальное количество страниц в API TMDB
 
 const App = () => {
   const [movies, setMovies] = useState([]);
@@ -52,10 +53,18 @@ const App = () => {
       const normalizedQuery = query.trim();
       console.log(`Поисковый запрос: "${normalizedQuery}", Страница: ${page}`);
 
+      // Вычисляем, какую страницу API нам нужно запросить
+      const apiPage = Math.ceil(page / 3); // Так как на одной странице API 20 фильмов, а нам нужно 6
+
+      if (apiPage > MAX_PAGES) {
+        setLoading(false);
+        return;
+      }
+
       fetch(
         `/api/search/movie?query=${encodeURIComponent(
           normalizedQuery
-        )}&include_adult=false&language=en-US&page=${page}`,
+        )}&include_adult=false&language=en-US&page=${apiPage}`,
         options
       )
         .then((res) => res.json())
@@ -67,11 +76,24 @@ const App = () => {
               name: genres[id],
             })),
           }));
-          console.log(
-            `Найдено фильмов: ${data.total_results}, Текущая страница: ${page}, Фильмов на странице: ${moviesWithGenres.length}`
+
+          // Вычисляем индексы для текущей страницы
+          const startIndex = ((page - 1) % 3) * PAGE_SIZE;
+          const endIndex = startIndex + PAGE_SIZE;
+          const currentPageMovies = moviesWithGenres.slice(
+            startIndex,
+            endIndex
           );
-          setMovies(moviesWithGenres);
-          setTotalResults(data.total_results);
+
+          console.log(
+            `Найдено фильмов: ${data.total_results}, Текущая страница: ${page}, Фильмов на странице: ${currentPageMovies.length}`
+          );
+
+          // Ограничиваем общее количество результатов
+          const maxResults = Math.min(data.total_results, MAX_PAGES * 20);
+
+          setMovies(currentPageMovies);
+          setTotalResults(maxResults);
           setLoading(false);
         })
         .catch((err) => {
@@ -91,8 +113,8 @@ const App = () => {
     [searchQuery, loadMovies]
   );
 
-  // Debounced поиск
-  const debouncedSearch = useCallback(
+  // Обработчик поиска с debounce
+  const handleSearch = useCallback(
     debounce((query) => {
       const normalizedQuery = query.trim();
       setSearchQuery(normalizedQuery);
@@ -104,7 +126,7 @@ const App = () => {
 
   return (
     <div className="container">
-      <MovieSearch onSearch={debouncedSearch} loading={loading} />
+      <MovieSearch onSearch={handleSearch} loading={loading} />
       {loading ? (
         <div className="spinner-container">
           <Spin size="large" />
